@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>মাকতাবাতুত তাইয়্যিবাহ</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600&family=Noto+Serif+Bengali:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef3f1;--card:#fff;--ink:#16302b;--mute:#5d726d;--line:#d3ded9;--brand:#0f5c4d;--on:#fff;--pop:#f2b705;--err:#b3261e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#0d1b18;--card:#152925;--card:#152925;--ink:#e6f0ed;--mute:#9bb3ac;--line:#28423c;--brand:#3cbf9f;--on:#06201a;--pop:#f2b705;--err:#ff8a80}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#0d1b18;--card:#152925;--ink:#e6f0ed;--mute:#9bb3ac;--line:#28423c;--brand:#3cbf9f;--on:#06201a;--err:#ff8a80}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Hind Siliguri",system-ui,sans-serif}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--brand);color:var(--on);display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:12px 16px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--brand);z-index:10}
+h1{font:800 20px "Noto Serif Bengali",serif;margin:0;flex:1 1 200px}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--pop);outline-offset:2px}
+.pri{background:var(--brand);color:var(--on);border-color:var(--brand);font-weight:600}
+header button{background:var(--pop);color:#1b1500;border:0;font-weight:600}
+main{max-width:1000px;margin:0 auto;padding:16px}
+.bar{display:flex;gap:8px;margin-bottom:16px}
+input,select{font:inherit;width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
+.book{background:var(--card);border:1px solid var(--line);border-radius:6px;display:flex;flex-direction:column;overflow:hidden}
+.book img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;background:var(--line)}
+.info{padding:10px;display:flex;flex-direction:column;gap:2px;flex:1}
+.t{font-weight:600;line-height:1.3}.a{color:var(--mute);font-size:14px}
+.p{font:800 18px "Noto Serif Bengali",serif;color:var(--brand);margin-top:4px}
+.book button{margin-top:8px;width:100%}
+.sold{color:var(--err);font-size:14px;margin-top:8px}
+.empty{padding:40px 16px;text-align:center;color:var(--mute)}
+.more{display:block;margin:20px auto;padding:10px 28px}
+#cf{width:auto;max-width:45%}
+dialog{border:0;border-radius:12px;padding:0;width:min(440px,94vw);background:var(--card);color:var(--ink);max-height:90vh}
+dialog::backdrop{background:#0008}
+.in{padding:18px;display:grid;gap:12px}
+.in h2{margin:0;font:800 20px "Noto Serif Bengali",serif}
+label{display:grid;gap:4px;font-size:14px;color:var(--mute)}
+.row{display:flex;gap:8px;justify-content:flex-end}
+.prev{width:90px;aspect-ratio:3/4;object-fit:cover;border-radius:4px;display:none}
+.ci{display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line);padding:8px 0}
+.ci img{width:44px;aspect-ratio:3/4;object-fit:cover;border-radius:3px}.ci div{flex:1}
+.tot{font-weight:600;display:flex;justify-content:space-between;font-size:18px}
+.msg{color:var(--mute);font-size:14px}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="shop">মাকতাবাতুত তাইয়্যিবাহ</h1>
+  <button id="admBtn" hidden>বই যোগ করুন</button>
+  <button id="cartBtn">কার্ট (0)</button>
+</header>
+<main>
+  <div class="bar"><input id="q" type="search" placeholder="বইয়ের নাম বা লেখক খুঁজুন" aria-label="খুঁজুন"><select id="cf" aria-label="ক্যাটাগরি"><option value="">সব ক্যাটাগরি</option></select></div>
+  <div id="grid" class="grid"></div>
+  <p id="status" class="empty">বই লোড হচ্ছে…</p>
+  <button id="more" class="more" hidden>আরও দেখান</button>
+</main>
+
+<dialog id="addDlg"><div class="in">
+  <h2 id="addTitle">নতুন বই</h2>
+  <label>বইয়ের ছবি<input id="fImg" type="file" accept="image/*"></label>
+  <img id="prev" class="prev" alt="প্রিভিউ">
+  <label>ক্যাটাগরি<select id="fCat"></select></label>
+  <label>বইয়ের নাম<input id="fTitle"></label>
+  <label>লেখক<input id="fAuthor"></label>
+  <label>দাম (টাকা)<input id="fPrice" type="number" min="0" inputmode="numeric"></label>
+  <label>স্টকে আছে (কপি)<input id="fStock" type="number" min="0" value="1" inputmode="numeric"></label>
+  <p id="addErr" class="msg" role="alert"></p>
+  <div class="row"><button id="addCancel">বাতিল</button><button id="addSave" class="pri">বই সেভ করুন</button></div>
+</div></dialog>
+
+<dialog id="cartDlg"><div class="in">
+  <h2>আপনার কার্ট</h2>
+  <div id="cartList"></div>
+  <div class="tot"><span>মোট</span><span id="total">৳0</span></div>
+  <label>আপনার নাম<input id="cName" autocomplete="name"></label>
+  <label>ফোন নম্বর<input id="cPhone" type="tel" autocomplete="tel"></label>
+  <label>ঠিকানা<input id="cAddr" autocomplete="street-address"></label>
+  <p id="cartMsg" class="msg" role="alert"></p>
+  <div class="row"><button id="cartClose">বন্ধ করুন</button><button id="order" class="pri">হোয়াটসঅ্যাপে অর্ডার করুন</button></div>
+  <div class="row"><button id="setWa" hidden>বিক্রেতার হোয়াটসঅ্যাপ নম্বর সেট করুন</button></div>
+</div></dialog>
+
+<script>
+const $=id=>document.getElementById(id);
+const bn=n=>String(n).replace(/\d/g,d=>"০১২৩৪৫৬৭৮৯"[d]);
+const CATS=["তাফসীর","হাদীস","ফিকহ","আকীদা","সীরাত","জীবনী","শিশুতোষ","ইসলামী সাহিত্য","অন্যান্য"];let shown=40;
+let books=[],cart={},db=null,assets=null,isEdit=false,wa="",imgUp=null,editId=null,shopDoc=null;
+
+function render(){
+  const q=$("q").value.trim().toLowerCase(),g=$("grid");
+  g.textContent="";
+  const cv=$("cf").value;
+  const all=books.filter(b=>(b.title+" "+b.author).toLowerCase().includes(q)&&(!cv||b.cat===cv));
+  const list=all.slice(0,shown);
+  list.forEach(b=>{
+    const c=document.createElement("div");c.className="book";
+    const im=document.createElement("img");im.alt=b.title;im.loading="lazy";
+    if(b.img&&b.img.startsWith("/_blob/"))im.src=b.img;
+    const i=document.createElement("div");i.className="info";
+    const t=document.createElement("div");t.className="t";t.textContent=b.title;
+    const a=document.createElement("div");a.className="a";a.textContent=b.author||"";
+    const p=document.createElement("div");p.className="p";p.textContent="৳"+bn(b.price);
+    const k=document.createElement("div");k.className="a";k.textContent=b.cat||"";
+    i.append(t,a,k,p);
+    if(b.stock>0){
+      const btn=document.createElement("button");btn.className="pri";btn.textContent="কার্টে নিন";
+      btn.onclick=()=>{cart[b.id]=Math.min((cart[b.id]||0)+1,b.stock);upd();};
+      i.append(btn);
+    }else{const s=document.createElement("div");s.className="sold";s.textContent="স্টক শেষ";i.append(s);}
+    if(isEdit){
+      const e=document.createElement("button");e.textContent="এডিট";e.onclick=()=>openAdd(b);
+      const d=document.createElement("button");d.textContent="মুছুন";
+      d.onclick=async()=>{if(confirm("\""+b.title+"\" মুছে ফেলবেন?"))await db.collection("books").doc(b.id).delete();};
+      i.append(e,d);
+    }
+    c.append(im,i);g.append(c);
+  });
+  const st=$("status");
+  st.hidden=list.length>0;
+  $("more").hidden=all.length<=shown;
+  if(!list.length)st.textContent=books.length?"এই নামে বা ক্যাটাগরিতে কোনো বই পাওয়া যায়নি।":(isEdit?"এখনো কোনো বই নেই। উপরে “বই যোগ করুন” চাপুন।":"শীঘ্রই বই যোগ হবে।");
+}
+function upd(){
+  const n=Object.values(cart).reduce((a,b)=>a+b,0);
+  $("cartBtn").textContent="কার্ট ("+bn(n)+")";
+  const l=$("cartList");l.textContent="";let tot=0;
+  Object.keys(cart).forEach(id=>{
+    const b=books.find(x=>x.id===id);if(!b){delete cart[id];return;}
+    tot+=b.price*cart[id];
+    const r=document.createElement("div");r.className="ci";
+    const im=document.createElement("img");im.alt="";if(b.img)im.src=b.img;
+    const d=document.createElement("div");d.textContent=b.title+" × "+bn(cart[id]);
+    const m=document.createElement("button");m.textContent="−";m.setAttribute("aria-label","কমান");
+    m.onclick=()=>{cart[id]--;if(cart[id]<=0)delete cart[id];upd();};
+    r.append(im,d,m);l.append(r);
+  });
+  if(!Object.keys(cart).length)l.innerHTML='<p class="msg">কার্ট খালি।</p>';
+  $("total").textContent="৳"+bn(tot);
+}
+CATS.forEach(c=>{["cf","fCat"].forEach(id=>{const o=document.createElement("option");o.value=o.textContent=c;$(id).append(o);});});
+$("q").oninput=()=>{shown=40;render();};
+$("cf").onchange=()=>{shown=40;render();};
+$("more").onclick=()=>{shown+=40;render();};
+$("cartBtn").onclick=()=>{upd();$("cartMsg").textContent="";$("cartDlg").showModal();};
+$("cartClose").onclick=()=>$("cartDlg").close();
+$("order").onclick=()=>{
+  const ids=Object.keys(cart),m=$("cartMsg");
+  if(!ids.length){m.textContent="আগে কার্টে বই যোগ করুন।";return;}
+  const n=$("cName").value.trim(),p=$("cPhone").value.trim(),a=$("cAddr").value.trim();
+  if(!n||!p||!a){m.textContent="নাম, ফোন ও ঠিকানা দিন।";return;}
+  if(!wa){m.textContent="বিক্রেতা এখনো হোয়াটসঅ্যাপ নম্বর দেননি।";return;}
+  let tot=0;
+  const lines=ids.map(id=>{const b=books.find(x=>x.id===id);tot+=b.price*cart[id];return "• "+b.title+" × "+cart[id]+" = ৳"+b.price*cart[id];});
+  const text="নতুন অর্ডার\n"+lines.join("\n")+"\nমোট: ৳"+tot+"\n\nনাম: "+n+"\nফোন: "+p+"\nঠিকানা: "+a;
+  window.open("https://wa.me/"+wa+"?text="+encodeURIComponent(text),"_blank");
+};
+$("setWa").onclick=async()=>{
+  const v=prompt("হোয়াটসঅ্যাপ নম্বর (দেশের কোডসহ, যেমন 8801712345678):",wa);
+  if(v===null)return;
+  const num=v.replace(/\D/g,"");
+  try{await db.doc("settings/shop").set({whatsapp:num});}catch(e){$("cartMsg").textContent="সেভ হয়নি।";}
+};
+
+function openAdd(b){
+  editId=b?b.id:null;imgUp=b?b.img:null;
+  $("addTitle").textContent=b?"বই এডিট":"নতুন বই";
+  $("fCat").value=b&&b.cat?b.cat:CATS[0];$("fTitle").value=b?b.title:"";$("fAuthor").value=b?b.author:"";
+  $("fPrice").value=b?b.price:"";$("fStock").value=b?b.stock:1;$("fImg").value="";
+  const pv=$("prev");pv.style.display=imgUp?"block":"none";if(imgUp)pv.src=imgUp;
+  $("addErr").textContent="";$("addDlg").showModal();
+}
+$("admBtn").onclick=()=>openAdd(null);
+$("addCancel").onclick=()=>$("addDlg").close();
+$("fImg").onchange=async e=>{
+  const f=e.target.files[0];if(!f||!assets)return;
+  $("addErr").textContent="ছবি আপলোড হচ্ছে…";
+  try{
+    const r=await assets.upload(f);
+    imgUp=r.url;$("prev").src=r.url;$("prev").style.display="block";$("addErr").textContent="";
+  }catch(x){$("addErr").textContent="ছবি আপলোড হয়নি। আবার চেষ্টা করুন।";}
+};
+$("addSave").onclick=async()=>{
+  const t=$("fTitle").value.trim(),pr=Number($("fPrice").value),sk=Number($("fStock").value);
+  if(!t||!(pr>=0)||$("fPrice").value===""){$("addErr").textContent="বইয়ের নাম ও দাম দিন।";return;}
+  if(!imgUp){$("addErr").textContent="বইয়ের ছবি দিন।";return;}
+  const id=editId||("b"+Date.now().toString(36));
+  try{
+    await db.collection("books").doc(id).set({title:t,cat:$("fCat").value,author:$("fAuthor").value.trim(),price:pr,stock:sk||0,img:imgUp,at:editId?(books.find(x=>x.id===id)||{}).at||Date.now():Date.now()});
+    $("addDlg").close();
+  }catch(x){$("addErr").textContent="সেভ হয়নি। আবার চেষ্টা করুন।";}
+};
+
+async function boot(){
+  let timer=setTimeout(()=>{if(!db){$("status").textContent="বই দেখতে ক্লড অ্যাকাউন্টে সাইন-ইন করুন।";}},10000);
+  try{
+    const user=await claude.use("user");
+    isEdit=user?((await user.canEdit())===true):false;
+    db=await claude.use("db");
+    if(isEdit)assets=await claude.use("assets");
+  }catch(e){}
+  clearTimeout(timer);
+  if(!db){$("status").textContent="বই দেখতে ক্লড অ্যাকাউন্টে সাইন-ইন করুন।";return;}
+  $("admBtn").hidden=!(isEdit&&assets);$("setWa").hidden=!isEdit;
+  db.collection("books").onSnapshot(s=>{
+    books=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.at||0)-(a.at||0));
+    render();upd();
+  },()=>{$("status").hidden=false;$("status").textContent="বই লোড করা যায়নি।";});
+  db.doc("settings/shop").onSnapshot(s=>{wa=(s.exists&&s.data().whatsapp)||"";},()=>{});
+  render();
+}
+render();boot();
+</script>
+</body>
+</html>
